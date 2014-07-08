@@ -2,6 +2,7 @@ package nu.johanw123.squaremanboy;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -24,6 +25,8 @@ public class Parse implements HttpResponseListener, Input.TextInputListener
     private String app_id;
     private String app_key;
 
+    public static boolean inputShowing = false;
+
     private static String sInputUserName = "noname";
 
     public Parse(){
@@ -32,7 +35,9 @@ public class Parse implements HttpResponseListener, Input.TextInputListener
     }
 
     public void add_net_score(){
-        Gdx.input.getTextInput(this, "Enter name", sInputUserName);
+        inputShowing = true;
+        //Gdx.input.getTextInput(this, "Enter name", sInputUserName);
+        Gdx.input.getPlaceholderTextInput(this, "Enter name", sInputUserName);
         //add_net_score("lol");
     }
     private void add_net_score(String userName)
@@ -44,7 +49,7 @@ public class Parse implements HttpResponseListener, Input.TextInputListener
         httpPost.setHeader("X-Parse-Application-Id", app_id);
         httpPost.setHeader("X-Parse-REST-API-Key", app_key);
         int score = SGame.currentLevelId - 10;
-        httpPost.setContent("{\"score\": " + score + ", \"user\": \"" + userName + "\", \"time\": " + SGame.survivalTotalTime +"}");
+        httpPost.setContent("{\"score\": " + score + ", \"user\": \"" + userName + "\", \"time\": " + Extensions.FormatFloatPrecision(SGame.survivalTotalTime, 3) +"}");
         Gdx.net.sendHttpRequest(httpPost,Parse.this);
     }
     /*
@@ -166,11 +171,14 @@ public class Parse implements HttpResponseListener, Input.TextInputListener
         add_net_score(text);
         SGame.ExternalHandler.showFullAd(true);
         SGame.ExternalHandler.showAd(true);
+
+        inputShowing =false;
     }
 
-    @Override
+    @Override //input canceled
     public void canceled() {
 
+        inputShowing =false;
     }
 
 	@Override

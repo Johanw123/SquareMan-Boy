@@ -33,7 +33,7 @@ public class Entity extends Sprite
 	
 	public void render(SpriteBatch batch)
 	{
-		batch.draw(this.getTexture(), this.getX(), this.getY(), 32, 32);
+		batch.draw(this.getTexture(), this.getX(), this.getY(), this.getTexture().getWidth(), this.getTexture().getHeight());
 	}
 	
 	public void update(float deltaTime)

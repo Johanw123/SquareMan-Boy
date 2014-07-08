@@ -1,29 +1,13 @@
 package nu.johanw123.squaremanboy;
 
-import java.util.concurrent.Callable;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.Scaling;
 
 public class EscapeMenuScreen extends SScreen
 {
@@ -36,6 +20,7 @@ public class EscapeMenuScreen extends SScreen
         setupButtons();
         
         SInput.addKeyboardListener(this);
+        SInput.addGamepadListener(this);
     }
 	
 	private void setupButtons()
@@ -87,10 +72,13 @@ public class EscapeMenuScreen extends SScreen
 	{
 		SGame.changeScreen(SGame.eScreenTypes.Game, "resume");
 		SInput.removeKeyboardListener(this);
+        SInput.removeGamepadListener(this);
 	}
 	
 	@Override
 	public void render(float delta) {
+        super.render(delta);
+
 		camera.update();
 
 		
@@ -117,5 +105,20 @@ public class EscapeMenuScreen extends SScreen
 		
 		return false;
 	}
+
+    @Override
+    public boolean buttonDown(Controller controller, int buttonIndex) {
+
+        if(SInput.getButtonIndexMatch(buttonIndex, SInput.eControllerButtons.Menu))
+        //if((buttonIndex == Ouya.BUTTON_MENU || buttonIndex == 7) ) //7 is xbox controller start button
+        {
+            resumeGame();
+            return true;
+        }
+
+
+
+        return false;
+    }
 
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="50" height="20" tilewidth="32" tileheight="32">
- <tileset firstgid="1" name="sheet" tilewidth="32" tileheight="32">
-  <image source="sheet.png" width="160" height="32"/>
+<map version="1.0" orientation="orthogonal" width="50" height="20" tilewidth="128" tileheight="128">
+ <tileset firstgid="1" name="sheet" tilewidth="128" tileheight="128">
+  <image source="sheet128.png" width="640" height="128"/>
  </tileset>
  <layer name="Tile Layer 2" width="50" height="20">
   <data encoding="base64">
@@ -9,6 +9,6 @@
   </data>
  </layer>
  <objectgroup name="Objects" width="50" height="20">
-  <object name="Player" x="96" y="512" width="32" height="32"/>
+  <object name="Player" x="896" y="2048" width="128" height="128"/>
  </objectgroup>
 </map>

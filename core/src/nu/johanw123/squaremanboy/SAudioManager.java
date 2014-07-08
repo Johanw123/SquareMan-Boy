@@ -20,14 +20,14 @@ public class SAudioManager
 	public static void setup()	
 	{
 		musicNames = new HashMap<String, String>();
-    	musicNames.put("MainMenu", "Lino Rise - Wechselwelt Trance Intro");
-		
+    	musicNames.put("MainMenu", "Lino Rise_-_Wechselwelt Trance_Intro");
+
 		musicNames.put("Song1", "danosongs.com-rocketry");
-		musicNames.put("Song2", "Killing Time");
-		musicNames.put("Song3", "Latin Industries");
-		musicNames.put("Song4", "Lino Rise - Mana Tangata");
-		musicNames.put("Song5", "Lino Rise - Rabenschwarz");		
-		musicNames.put("Song6", "Ouroboros - Full Mix");
+		musicNames.put("Song2", "Killing_Time");
+		musicNames.put("Song3", "Latin_Industries");
+		musicNames.put("Song4", "Lino_Rise_-_Mana_Tangata");
+		musicNames.put("Song5", "Lino_Rise -_Rabenschwarz");
+		musicNames.put("Song6", "Ouroboros_-_Full_Mix");
 		
 		playlistAll.add("Song1");
 		playlistAll.add("Song2");
@@ -60,7 +60,7 @@ public class SAudioManager
 			public void onCompletion(Music music) {
 				nextSong();				
 			}
-		});		
+		});
 	}
 	
 	public static void toggleMusic()
@@ -89,15 +89,15 @@ public class SAudioManager
 		
 		if(musicNames.containsKey(key))
 		{			
-			currentMusic = Gdx.audio.newMusic(Gdx.files.internal("data/audio/" + musicNames.get(key) + ".mp3"));			
+			currentMusic = Gdx.audio.newMusic(Gdx.files.internal("data/audio/" + musicNames.get(key) + ".ogg"));
 			currentMusic.setLooping(loop);
 			if(SRuntime.musicOn)
 				currentMusic.setVolume(0.5f);
 			else
 				currentMusic.setVolume(0);
-			currentMusic.play();			
+			currentMusic.play();
 		}
-		
+
 	}
 	
 

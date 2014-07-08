@@ -1,12 +1,14 @@
 package nu.johanw123.squaremanboy;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.PovDirection;
+import com.badlogic.gdx.controllers.mappings.Ouya;
 import com.badlogic.gdx.math.Vector3;
 
 /**
@@ -177,8 +179,109 @@ public class SInput implements InputProcessor, ControllerListener
 			// TODO Auto-generated method stub
 			return false;
 		}
-		
-		
+
+        public enum eControllerButtons
+        {
+            Menu,
+            Menu_Accept,
+            Menu_Back,
+            CameraToggle,
+            Menu_Left,
+            Menu_Right,
+            Menu_Up,
+            Menu_Down
+
+
+
+
+        }
+
+        public enum eControllerAxis
+        {
+            Menu_Move_X,
+            Menu_Move_Y,
+            Camera_Move_X,
+            Camera_Move_Y,
+            Game_Move_X,
+            Game_Move_Y
+
+        }
+
+        public static boolean getButtonIndexMatch(int buttonIndex, eControllerButtons controllerButton)
+        {
+            int acceptedIndexes;
+            List<Integer> indexList = new ArrayList<Integer>();
+            switch(controllerButton)
+            {
+                case Menu_Accept:
+                    if(Ouya.runningOnOuya) {
+                        indexList.add(Ouya.BUTTON_O);
+                    }
+                    else {
+                        indexList.add(Xbox360Pad.BUTTON_A);
+                        indexList.add(Xbox360Pad.BUTTON_START);
+                    }
+                    break;
+                case Menu_Back:
+                    if(Ouya.runningOnOuya) {
+                        indexList.add(Ouya.BUTTON_A);
+                    }
+                    else {
+                        indexList.add(Xbox360Pad.BUTTON_B);
+                        indexList.add(Xbox360Pad.BUTTON_BACK);
+                    }
+                    break;
+                case CameraToggle:
+                    if(Ouya.runningOnOuya) {
+                        indexList.add(Ouya.BUTTON_U);
+                    }
+                    else {
+                        indexList.add(Xbox360Pad.BUTTON_X);
+                    }
+                    break;
+                case Menu:
+                    if(Ouya.runningOnOuya) {
+                        indexList.add(82); //Ouya Button Menu
+                    }
+                    else {
+                        indexList.add(Xbox360Pad.BUTTON_START);
+                    }
+                    break;
+                case Menu_Left:
+                    if(Ouya.runningOnOuya) {
+                        indexList.add(Ouya.BUTTON_DPAD_LEFT);
+                    }
+                    break;
+                case Menu_Right:
+                    if(Ouya.runningOnOuya) {
+                        indexList.add(Ouya.BUTTON_DPAD_RIGHT);
+                    }
+                    break;
+                case Menu_Up:
+                    if(Ouya.runningOnOuya) {
+                        indexList.add(Ouya.BUTTON_DPAD_UP);
+                    }
+                    break;
+                case Menu_Down:
+                    if(Ouya.runningOnOuya) {
+                        indexList.add(Ouya.BUTTON_DPAD_DOWN);
+                    }
+                    break;
+
+            }
+
+            for (int i = 0; i < indexList.size(); i++) {
+                if(buttonIndex == indexList.get(i))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public static float getAxisValue(int index)
+        {
+            return SGame.activeController.getAxis(index);
+        }
 		
 		//Polling methods
 		public static boolean isKeyDown(int key)

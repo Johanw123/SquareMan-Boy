@@ -27,5 +27,12 @@
               }
               document.getElementById('embed-html').addEventListener('mousedown', handleMouseDown, false);
               document.getElementById('embed-html').addEventListener('mouseup', handleMouseUp, false);
+
+              document.onkeydown = function(e) {
+                var k = e.keyCode;
+                if(k >= 37 && k <= 40 || k == 32) {
+                return false;
+                }
+              }
        </script>
 </html>

@@ -48,7 +48,8 @@ public class SurvivalEndScreen extends SScreen
 				public boolean handle(Event event) {
 					if(event.toString() == "ButtonActivated")
 					{
-						SGame.parse.add_net_score();	
+                        if(!Parse.inputShowing)
+						    SGame.parse.add_net_score();
 						
 						//SGame.parse.clean_net_score();
 					}
@@ -88,19 +89,24 @@ public class SurvivalEndScreen extends SScreen
 	String status = "";
 	@Override
 	public void render(float delta) {
-		camera.update();
-	       
-		Gdx.gl.glClearColor(0, 0, 0, 0);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
-		stage.act(Gdx.graphics.getDeltaTime());
+        super.render(delta);
+
+        Gdx.gl.glClearColor(0, 0, 0, 0);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
         Table.drawDebug(stage);
+
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
+
 
         batch.begin();
         String drawString = "Score: " + (SGame.currentLevelId - 10);
         
         SGame.font.draw(batch, drawString, SRuntime.SCREEN_WIDTH/2 - SGame.font.getBounds(drawString).width / 2, SRuntime.SCREEN_HEIGHT/2 - 100);
+
         if(uploadCode == -1)
         	status = "";
 

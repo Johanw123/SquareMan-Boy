@@ -48,10 +48,15 @@ public class SScreen implements Screen, SKeyboardListener, SGamepadListener, STo
 	}
 
 	@Override
-	public void render(float arg0) {
-		
-		
+	public void render(float delta) {
+        update(delta);
+
 	}
+
+    public void update(float delta)
+    {
+        buttonHandler.update(delta);
+    }
 
 	@Override
 	public void resize(int width, int height) {		

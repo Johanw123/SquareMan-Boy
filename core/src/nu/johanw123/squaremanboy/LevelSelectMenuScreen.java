@@ -80,7 +80,7 @@ public class LevelSelectMenuScreen extends SScreen
         	buttonHandler.createButton(SGame.levelNamesArray[i + page * 7].substring(0, SGame.levelNamesArray[i + page * 7].lastIndexOf('.')), eventListener, x, y, buttonWidth, buttonHeight);        	
         }
         
-        buttonHandler.setSelectedButton(0);
+
         
         if(createForwardsButton)
     	{        	
@@ -126,7 +126,12 @@ public class LevelSelectMenuScreen extends SScreen
 					}
 					return false;
 				}
-	        }, 800, 100, 400, 70);  
+	        }, 800, 100, 400, 70);
+
+
+
+        buttonHandler.setSelectedButton(0);
+        buttonHandler.setMenuBackButton("Back to Menu");
 		
 	}
 	
@@ -146,6 +151,8 @@ public class LevelSelectMenuScreen extends SScreen
 	
 	@Override
 	public void render(float delta) {
+        super.render(delta);
+
 		camera.update();
 	       
 		Gdx.gl.glClearColor(0, 0, 0, 0);

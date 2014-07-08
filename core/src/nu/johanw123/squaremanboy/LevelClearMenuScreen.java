@@ -1,5 +1,6 @@
 package nu.johanw123.squaremanboy;
 
+import java.util.Locale;
 import java.util.concurrent.Callable;
 
 import com.badlogic.gdx.Gdx;
@@ -12,6 +13,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.Timer;
 
 public class LevelClearMenuScreen extends SScreen
 {
@@ -25,7 +28,7 @@ public class LevelClearMenuScreen extends SScreen
 		clearTime = _clearTime;
 		levelName = _levelName;
 		
-		buttonHandler.addListeners();
+
 		
         setupButtons();
         
@@ -42,6 +45,16 @@ public class LevelClearMenuScreen extends SScreen
         {
         	personalBest = ""+savedBest;
         }
+
+
+        float delay = 0.1f; // seconds
+
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                buttonHandler.addListeners();
+            }
+        }, delay);
     }
 	
 	private void setupButtons()
@@ -100,6 +113,8 @@ public class LevelClearMenuScreen extends SScreen
 
 	@Override
 	public void render(float delta) {
+        super.render(delta);
+
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
@@ -107,6 +122,8 @@ public class LevelClearMenuScreen extends SScreen
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
+
+
         
         String clearString1 = levelName.substring(0, levelName.lastIndexOf('.')) + " Cleared!";
         SGame.font.draw(batch, clearString1, SRuntime.SCREEN_WIDTH/2 - SGame.font.getBounds(clearString1).width / 2, SRuntime.SCREEN_HEIGHT - 100);
@@ -120,7 +137,7 @@ public class LevelClearMenuScreen extends SScreen
         
         if(SGame.GameMode == SGame.eGameMode.Survival)
         {
-        	  String clearString4 = "Total Time: " + SGame.survivalTotalTime + " s";
+        	  String clearString4 = "Total Time: " + Extensions.FormatFloatPrecision(SGame.survivalTotalTime, 3) + " s";
               SGame.font.draw(batch, clearString4, SRuntime.SCREEN_WIDTH/2 - SGame.font.getBounds(clearString4).width / 2, SRuntime.SCREEN_HEIGHT - 400);
               
         }

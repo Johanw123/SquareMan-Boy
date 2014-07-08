@@ -32,16 +32,18 @@ public class SGame extends Game {
     public static String currentLevelName;
     public static Parse parse;
     public static Stage stage;
-    public static Controller controller;
+    public static ArrayList<Controller> foundControllers;
+    public static Controller activeController;
         
     private static ArrayList<String> levelNames = new ArrayList<String>();    
     private static GameScreen gameScreen;
     private static Screen currentScreen;
     private static SGame game;
-    private static SInput sInput;
+    public static SInput sInput;
 
     public enum eScreenTypes
     {
+        SplashMenu,
         MainMenu,
         Game,
         EscapeMenu,
@@ -66,6 +68,7 @@ public class SGame extends Game {
     	None,
     	Desktop,
     	Android,
+        Ouya,
     	HTML5
     }
     
@@ -131,15 +134,13 @@ public class SGame extends Game {
     @Override
     public void create()
     {
-    	GameStrings.Setup();
-    	
         batch = new SpriteBatch();
 
         //fillLevelNames();
         fillLevelNamesManual();
 
-        font = new BitmapFont(Gdx.files.internal("data/fonts/FreeSerifBold.fnt"));       
-        
+        font = new BitmapFont(Gdx.files.internal("data/fonts/FreeSerifBoldBig.fnt"));
+        font.setScale(0.25f);
         SAudioManager.setup();
         SRuntime.SetupVars();
 
@@ -153,13 +154,18 @@ public class SGame extends Game {
         
         for (Controller controller : Controllers.getControllers()) {
             System.out.println(controller.getName());
+
+            foundControllers.add(controller);
+
+            controller.addListener(sInput);
         }
+        /*
         if(Controllers.getControllers().size > 0)
         {
         	controller = Controllers.getControllers().first();
         	controller.addListener(sInput);
         }
-        
+        */
         
         
         
@@ -176,11 +182,9 @@ public class SGame extends Game {
         Timer.schedule(new Task(){
             @Override
             public void run() {
-            	SGame.changeScreen(eScreenTypes.MainMenu);
-            	
-            	SAudioManager.playMusic("MainMenu", true);
+            	SGame.changeScreen(eScreenTypes.SplashMenu);
             }
-        }, 0.5f);         
+        }, 0.2f);
         
     }    
 
@@ -246,7 +250,7 @@ public class SGame extends Game {
                         String levelName = levelNames.get(currentLevelId);
 
                        gameScreen.changeMap(levelName);
-                        //gameScreen.changeMap("008.tmx");
+                       // gameScreen.changeMap("test128.tmx");
 
                         currentLevelName = levelName;
                     }
@@ -266,6 +270,9 @@ public class SGame extends Game {
                 }
 
                 currentScreen = gameScreen;
+                break;
+            case SplashMenu:
+                currentScreen = new SplashMenuScreen(game);
                 break;
             case MainMenu:
                 currentScreen = new MainMenuScreen(game);
@@ -306,7 +313,7 @@ public class SGame extends Game {
         
         float scale = Gdx.graphics.getWidth() / 1280;
 	    
-	    SGame.font.setScale(scale);
+	    //SGame.font.setScale(scale);
 
     	game.setScreen(currentScreen);
     	

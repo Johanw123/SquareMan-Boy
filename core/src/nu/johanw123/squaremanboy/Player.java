@@ -1,13 +1,15 @@
 package nu.johanw123.squaremanboy;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.controllers.mappings.Ouya;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+
+
 
 
 public class Player extends Entity
@@ -17,7 +19,7 @@ public class Player extends Entity
 
 	public Player(float x, float y)
 	{
-		super(x,y, "Player");
+		super(x,y, "Player128");
 
         startPosition = new Vector2(x,y);
         freeCameraPosition = new Vector2(x,y);
@@ -50,75 +52,108 @@ public class Player extends Entity
 					SGame.stage.getCamera().unproject(new Vector3(Gdx.input.getX(i), Gdx.input.getY(i), 0));
 					if(Gdx.input.getX(i) > SRuntime.SCREEN_WIDTH/2)
 					{						
-					    this.translateX(10);
+					    this.translateX(600 * SRuntime.SCALE_FACTOR * deltaTime);
 					}
 		            else if(Gdx.input.getX(i) < SRuntime.SCREEN_WIDTH/2)
 		            {
 		            	if(Gdx.input.getX(i) < 150 && Gdx.input.getY(i) > Gdx.graphics.getHeight() - 100)
 		            		continue;
 		            	
-		                this.translateX(-10);
+		                this.translateX(-600 * SRuntime.SCALE_FACTOR * deltaTime);
 		            }					
 				}
 			}
 		}
-		
-		if(Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isButtonPressed(Ouya.BUTTON_DPAD_RIGHT) ||
-				(SGame.controller != null && SGame.controller.getPov(0) == PovDirection.east))
-		
-		{
-			this.translateX((600) * deltaTime);
 
-		}
-		if((SGame.controller != null && SGame.controller.getAxis(0) > 0.3f))
-		{
-			this.translateX((600 * SGame.controller.getAxis(0)) * deltaTime);
-		}
-		if((SGame.controller != null && SGame.controller.getAxis(0) < -0.3f))
-		{
-			this.translateX((600 * SGame.controller.getAxis(0)) * deltaTime);
-		}
+        if(SGame.activeController != null) {
+            float axis = SGame.activeController.getAxis(Ouya.AXIS_LEFT_X);
+            if (checkAxis(axis)) {
+                this.translateX((600 * SRuntime.SCALE_FACTOR * axis) * deltaTime);
+            }
+        }
 		
-		if((SGame.controller != null && SGame.controller.getAxis(2) > 0.1f))
+		if((SGame.activeController != null && SGame.activeController.getAxis(Ouya.AXIS_LEFT_TRIGGER) > 0.1f))
 		{
-			this.translateX((600 * -SGame.controller.getAxis(2)) * deltaTime);
+			this.translateX((600 * SRuntime.SCALE_FACTOR * -SGame.activeController.getAxis(Ouya.AXIS_LEFT_TRIGGER)) * deltaTime);
 		}
-		if((SGame.controller != null && SGame.controller.getAxis(5) > 0.1f))
+		if((SGame.activeController != null && SGame.activeController.getAxis(Ouya.AXIS_RIGHT_TRIGGER) > 0.1f))
 		{
-			this.translateX((600 * SGame.controller.getAxis(5)) * deltaTime);
+			this.translateX((600 * SRuntime.SCALE_FACTOR * SGame.activeController.getAxis(Ouya.AXIS_RIGHT_TRIGGER)) * deltaTime);
 		}
+
 		if(Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isButtonPressed(Ouya.BUTTON_DPAD_LEFT) ||
-				(SGame.controller != null && SGame.controller.getPov(0) == PovDirection.west)){
-			this.translateX((-600) * deltaTime);
+				(SGame.activeController != null && SGame.activeController.getPov(0) == PovDirection.west))
+        {
+			this.translateX((-600 * SRuntime.SCALE_FACTOR) * deltaTime);
 		}
-		
+        if(Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isButtonPressed(Ouya.BUTTON_DPAD_RIGHT) ||
+                (SGame.activeController != null && SGame.activeController.getPov(0) == PovDirection.east))
+
+        {
+            this.translateX((600 * SRuntime.SCALE_FACTOR) * deltaTime);
+
+        }
+        if(SGame.activeController != null) {
+            float axis = SGame.activeController.getAxis(Ouya.AXIS_RIGHT_X);
+            if (checkAxis(axis)) {
+                freeCameraPosition.x += 600 * deltaTime * SRuntime.SCALE_FACTOR * axis;
+
+                if (freeCameraPosition.x < 0)
+                    freeCameraPosition.x = 0;
+
+                if (freeCameraPosition.x > SRuntime.WORLD_WIDTH * SRuntime.TILE_SIZE)
+                    freeCameraPosition.x = SRuntime.WORLD_WIDTH * SRuntime.TILE_SIZE;
+            }
+        }
+
+        if(SGame.activeController != null) {
+            float axis = SGame.activeController.getAxis(Ouya.AXIS_RIGHT_Y);
+            if (checkAxis(axis)) {
+                freeCameraPosition.y -= 600 * deltaTime * SRuntime.SCALE_FACTOR * axis;
+
+                if (freeCameraPosition.y < 0)
+                    freeCameraPosition.y = 0;
+
+                if (freeCameraPosition.y > SRuntime.WORLD_HEIGHT * SRuntime.TILE_SIZE)
+                    freeCameraPosition.y = SRuntime.WORLD_HEIGHT * SRuntime.TILE_SIZE;
+            }
+        }
+
 		if(Gdx.input.isKeyPressed(Keys.A))
 		{
-			freeCameraPosition.x -= 400 * deltaTime;
+			freeCameraPosition.x -= 600 * deltaTime * SRuntime.SCALE_FACTOR;
 			if(freeCameraPosition.x < 0)
 				freeCameraPosition.x = 0;
 		}
 		if(Gdx.input.isKeyPressed(Keys.D))
 		{
-			freeCameraPosition.x += 400 * deltaTime;
-			if(freeCameraPosition.x > SRuntime.WORLD_WIDTH * 32)
-				freeCameraPosition.x = SRuntime.WORLD_WIDTH * 32;
+			freeCameraPosition.x += 600 * deltaTime * SRuntime.SCALE_FACTOR;
+			if(freeCameraPosition.x > SRuntime.WORLD_WIDTH * SRuntime.TILE_SIZE)
+				freeCameraPosition.x = SRuntime.WORLD_WIDTH * SRuntime.TILE_SIZE;
 		}
 		if(Gdx.input.isKeyPressed(Keys.W))
 		{
-			freeCameraPosition.y += 400 * deltaTime;
-			if(freeCameraPosition.y > SRuntime.WORLD_HEIGHT * 32)
-				freeCameraPosition.y = SRuntime.WORLD_HEIGHT * 32;
+			freeCameraPosition.y += 600 * deltaTime * SRuntime.SCALE_FACTOR;
+			if(freeCameraPosition.y > SRuntime.WORLD_HEIGHT * SRuntime.TILE_SIZE)
+				freeCameraPosition.y = SRuntime.WORLD_HEIGHT * SRuntime.TILE_SIZE;
 		}
 		if(Gdx.input.isKeyPressed(Keys.S))
 		{
-			freeCameraPosition.y -= 400 * deltaTime;
+			freeCameraPosition.y -= 600 * deltaTime * SRuntime.SCALE_FACTOR;
 			if(freeCameraPosition.y < 0)
 				freeCameraPosition.y = 0;
 		}
-		
+
+
 		
 	}
+
+    public boolean checkAxis(float axisValue)
+    {
+        if(SGame.activeController != null &&  (axisValue > 0.3f || axisValue < -0.3f))
+            return true;
+        return false;
+    }
 	
 	@Override
 	public void update(float deltaTime)
@@ -130,8 +165,8 @@ public class Player extends Entity
         if(deltaTime > 0.04f)
         	deltaTime = 0.04f;
 
-        float newX = getX() + mVelocity.x * deltaTime;
-        float newY = getY() + mVelocity.y * deltaTime;
+        float newX = getX() + mVelocity.x * deltaTime * SRuntime.SCALE_FACTOR;
+        float newY = getY() + mVelocity.y * deltaTime * SRuntime.SCALE_FACTOR;
         float oldX = getX();
         float oldY = getY();
         
@@ -171,8 +206,7 @@ public class Player extends Entity
                 mVelocity = new Vector2(0, 1200);
                 return false;
             case 5:
-            	//reset();
-            	
+
                 return true;
             default:
             	System.out.println("WTF collision: Not Found! ;/");

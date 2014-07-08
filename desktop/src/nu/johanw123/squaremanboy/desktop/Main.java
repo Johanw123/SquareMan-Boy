@@ -10,11 +10,11 @@ public class Main {
 	public static void main(String[] args) {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "The-Adventure-Square";
-		cfg.width = 1280;
-		cfg.height = 720;
+        cfg.width = 1280;
+        cfg.height = 720;
 		cfg.resizable = true;
 		//cfg.fullscreen = true;
-		
+
 				
 		new LwjglApplication(new SGame(new RequestHandler()), cfg);
 		SGame.CurrentPlatform = SGame.ePlatform.Desktop;

@@ -16,18 +16,16 @@ public class OptionsMenuScreen extends SScreen
 		
 	}
 	
-	enum eCameraType
+	public enum eCameraType
 	{
 		Directed,		
-		Follow,
-		Free
+		Follow
 	}
 	
 	private enum CameraType
 	{
 		Directed,
-		Follow,
-		Free
+		Follow
 	}
 	
 	private eResolution currentResolution;
@@ -52,9 +50,9 @@ public class OptionsMenuScreen extends SScreen
 			case 1:
 				currentCameraType = CameraType.Follow;
 				break;
-			case 2:
-				currentCameraType = CameraType.Free;
-				break;
+            default:
+                currentCameraType = CameraType.Directed;
+                break;
 		}	
 				
 		setupButtons();
@@ -127,7 +125,8 @@ public class OptionsMenuScreen extends SScreen
 		        });
 		
 	        
-	        buttonHandler.setSelectedButton(0);
+	    buttonHandler.setSelectedButton(0);
+        buttonHandler.setMenuBackButton("Back");
 	}
 	
 	private void setMusicButtonText()
@@ -166,11 +165,11 @@ public class OptionsMenuScreen extends SScreen
 				currentCameraType = CameraType.Follow;				
 				break;
 			case Follow:
-				currentCameraType = CameraType.Free;
-				break;	
-			case Free:
 				currentCameraType = CameraType.Directed;
-				break;				
+                break;
+            default:
+                currentCameraType = CameraType.Directed;
+                break;
 		}
 		
 		setButtonCameraType();
@@ -191,6 +190,8 @@ public class OptionsMenuScreen extends SScreen
 	
 	@Override
 	public void render(float delta) {
+        super.render(delta);
+
         camera.update();
        
     	Gdx.gl.glClearColor(0, 0, 0, 0);

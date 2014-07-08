@@ -45,10 +45,13 @@ public class HighscoreMenuScreen extends SScreen
 	        });
       
       buttonHandler.setSelectedButton(0);
+      buttonHandler.setMenuBackButton(0);
 	}
 
 	@Override
 	public void render(float delta) {
+        super.render(delta);
+
 		camera.update();
 	       
 		Gdx.gl.glClearColor(0, 0, 0, 0);

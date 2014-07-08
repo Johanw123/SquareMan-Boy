@@ -3,6 +3,8 @@ package nu.johanw123.squaremanboy;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.mappings.Ouya;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -23,6 +25,10 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Locale;
 
 
 public class GameScreen extends SScreen
@@ -49,6 +55,8 @@ public class GameScreen extends SScreen
     
     long timeCount;
     long levelTime;
+
+    private FPSLogger fpsLogger;
     
 
     private Pool<Rectangle> rectPool = new Pool<Rectangle>() {
@@ -66,6 +74,7 @@ public class GameScreen extends SScreen
 
 		shapeRenderer = new ShapeRenderer();
 
+        fpsLogger = new FPSLogger();
 		//setupButtons();
 	}
 
@@ -90,12 +99,13 @@ public class GameScreen extends SScreen
         {
             if(object != null && object.getName() != null)
             {
-                switch (object.getName())
+               // if(object.getName() == "Player")
+                //switch (object.getName())
                 {
-                    case "Player":
+                    //case "Player":
                         RectangleMapObject rectangleMapObject = (RectangleMapObject)object;
                         player = new Player(rectangleMapObject.getRectangle().x, rectangleMapObject.getRectangle().y);
-                        break;
+                      //  break;
                 }
             }
         }
@@ -104,7 +114,7 @@ public class GameScreen extends SScreen
         //SetCameraOnPlayer();
         updateWorld = false;
         
-       
+
         
         float delay = 0.02f; // seconds
 
@@ -118,8 +128,8 @@ public class GameScreen extends SScreen
                 
                 if(SRuntime.cameraType == 0)
                 {
-	        		camera.position.y = 300;
-	        		camera.position.x = 600;
+	        		camera.position.y = 300 * SRuntime.SCALE_FACTOR;
+	        		camera.position.x = 600 * SRuntime.SCALE_FACTOR;
                 }
                 else
                 {
@@ -138,11 +148,12 @@ public class GameScreen extends SScreen
         camera.position.y = player.getY();       
 	}
 
-	public void update(float deltaTime)
+    @Override
+	public void update(float delta)
 	{		
 		if(updateWorld && !hidden)
 		{
-	        player.update(deltaTime);
+	        player.update(delta);
 	        updateCamera();
 			checkCollisions();
 	        checkBounds();
@@ -207,8 +218,8 @@ public class GameScreen extends SScreen
     	 float offsetX = player.getPosition().x - camera.position.x;
     	 float offsetY = player.getPosition().y - camera.position.y;
          
-         if(offsetX > 100
-         		|| offsetX < -100)
+         if(offsetX > 100 * SRuntime.SCALE_FACTOR
+         		|| offsetX < -100* SRuntime.SCALE_FACTOR)
          {
          	updateCamX = true;
          	//camDestX = player.getPosition().x + offsetX * 1.2f;
@@ -218,7 +229,7 @@ public class GameScreen extends SScreen
          	else if(offsetX > 0)
 	         	camDestX = player.getPosition().x + 50;
          	
-         	if(camDestX > SRuntime.WORLD_WIDTH * 32)
+         	if(camDestX > SRuntime.WORLD_WIDTH * SRuntime.TILE_SIZE)
          	{
          		updateCamX = false;
          	}
@@ -226,21 +237,21 @@ public class GameScreen extends SScreen
          }
          
          
-         if(offsetY > 300
-         		|| (offsetY < -300))
+         if(offsetY > 300* SRuntime.SCALE_FACTOR
+         		|| (offsetY < -300* SRuntime.SCALE_FACTOR))
          {
          	updateCamY = true;
          	
          	if(offsetY < 0)	
-         		camDestY = player.getPosition().y - 150;
+         		camDestY = player.getPosition().y - 150* SRuntime.SCALE_FACTOR;
          	else if(offsetY > 0)
-	         	camDestY = player.getPosition().y + 150;
+	         	camDestY = player.getPosition().y + 150* SRuntime.SCALE_FACTOR;
          	
-         	if(camDestY > SRuntime.WORLD_HEIGHT * 32)
+         	if(camDestY > SRuntime.WORLD_HEIGHT * SRuntime.TILE_SIZE)
          	{
          		updateCamY = false;
          	}	
-         	if(camDestY < -100)
+         	if(camDestY < -100* SRuntime.SCALE_FACTOR)
          	{
          		updateCamY = false;
          	}
@@ -257,9 +268,9 @@ public class GameScreen extends SScreen
     
     private void updateCamX2(float offsetX)
     {
-    	if((camera.position.x < 630 && offsetX < 0)
-              	|| (camera.position.x > SRuntime.WORLD_WIDTH * 32 && offsetX > 0)
-       			|| (Math.abs(camDestX - camera.position.x) < 10))
+    	if((camera.position.x < 630* SRuntime.SCALE_FACTOR && offsetX < 0)
+              	|| (camera.position.x > SRuntime.WORLD_WIDTH * SRuntime.TILE_SIZE && offsetX > 0)
+       			|| (Math.abs(camDestX - camera.position.x) < 10* SRuntime.SCALE_FACTOR))
            {
           	 updateCamX = false;
           	 return;
@@ -274,7 +285,7 @@ public class GameScreen extends SScreen
     private void updateCamY2(float offsetY)
     { 	
 		if((camera.position.y < 300 && offsetY < 0)
-			|| (camera.position.y > SRuntime.SCREEN_HEIGHT * 32 && offsetY > 0)
+			|| (camera.position.y > SRuntime.SCREEN_HEIGHT * SRuntime.TILE_SIZE && offsetY > 0)
 			|| (Math.abs(camDestY - camera.position.y) < 10))
         {
        	 updateCamY = false;
@@ -288,7 +299,7 @@ public class GameScreen extends SScreen
     private void updateCamX(float offsetX)
     {  		
    		if((camera.position.x < 600 && offsetX < 0)
-          	|| (camera.position.x > SRuntime.WORLD_WIDTH * 32 && offsetX > 0)
+          	|| (camera.position.x > SRuntime.WORLD_WIDTH * SRuntime.TILE_SIZE && offsetX > 0)
    			|| (offsetX < 10 && offsetX > -10))
        {
       	 updateCamX = false;
@@ -300,9 +311,9 @@ public class GameScreen extends SScreen
     }
     private void updateCamY(float offsetY)
     { 	
-		if((camera.position.y < 300 && offsetY < 0)
-			|| (camera.position.y > SRuntime.SCREEN_HEIGHT * 32 && offsetY > 0)
-			|| (offsetY < 10 && offsetY > -10))
+		if((camera.position.y < 300* SRuntime.SCALE_FACTOR && offsetY < 0)
+			|| (camera.position.y > SRuntime.SCREEN_HEIGHT * SRuntime.TILE_SIZE && offsetY > 0)
+			|| (offsetY < 10* SRuntime.SCALE_FACTOR && offsetY > -10* SRuntime.SCALE_FACTOR))
         {
        	 updateCamY = false;
        	 return;
@@ -332,15 +343,16 @@ public class GameScreen extends SScreen
 
                     if (player.getBoundingBox().overlaps(tile)) 
                     {
-                    	
                         if(player.handleTileCollision(cell.getTile().getId()))
                         {
                         	//Level finished
                         	levelTime = TimeUtils.timeSinceNanos(timeCount);
                         	float levelTimeF = TimeUtils.nanosToMillis(levelTime);
                         	levelTimeF /= 1000;
+
+                            levelTimeF = Extensions.FormatFloatPrecision(levelTimeF, 3);
                         	String levelTimeS = ""+levelTimeF;
-                        	
+
                         	if(SGame.GameMode == SGame.eGameMode.Survival)
                         		SGame.survivalTotalTime += levelTimeF;
                         	
@@ -357,8 +369,7 @@ public class GameScreen extends SScreen
 
 	@Override
 	public void render(float delta) {
-        
-		update(delta);
+        super.render(delta);
 		
 		if(!mapLoaded)
 			return;
@@ -375,8 +386,10 @@ public class GameScreen extends SScreen
 		stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
         Table.drawDebug(stage);
-		
-		
+
+        //Gdx.graphics.setTitle(""+Gdx.graphics.getFramesPerSecond());
+        fpsLogger.log();
+
 		renderer.setView((OrthographicCamera) camera);
 		renderer.render();
 		
@@ -402,37 +415,65 @@ public class GameScreen extends SScreen
 		hidden = false;
 		//SetCameraOnPlayer();
 		
-	
+
 		//camera.position.x = SRuntime.WORLD_WIDTH;
 		//camera.position.y = 530;
     	
 		
 		SInput.addKeyboardListener(this);
+        SInput.addGamepadListener(this);
 	}
-	
+
+    public void setSize(int width, int height)
+    {
+        int virtualScreenWidth = SRuntime.getGameVirtualWidth();
+        int virtualScreenHeight = SRuntime.getGameVirtualHeight();
+
+        if(SGame.CurrentPlatform == SGame.ePlatform.Desktop || SGame.CurrentPlatform == SGame.ePlatform.Ouya) {
+            //Allows for resize on desktop
+        virtualScreenWidth = width;
+        virtualScreenHeight = height;
+    }
+
+        Vector2 size = Scaling.fill.apply(virtualScreenWidth, virtualScreenHeight, width, height);
+        int viewportX = (int)(width - size.x) / 2;
+        int viewportY = (int)(height - size.y) / 2;
+        int viewportWidth = (int)size.x;
+        int viewportHeight = (int)size.y;
+
+
+        // Create camera with the desired resolution
+        camera = new OrthographicCamera(width, height);
+
+        // Move camera center to push 0,0 into the corner
+        //camera.translate(width / 2, height / 2);
+
+        // Set Y to point downwards
+        camera.setToOrtho(false, virtualScreenWidth, virtualScreenHeight);
+
+        camera.zoom = SRuntime.SCALE_FACTOR;
+
+        // Update camera matrix
+        camera.update();
+
+        Gdx.gl.glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
+        stage.getViewport().update(viewportWidth, viewportHeight);
+
+    }
+
 	@Override
 	public void resize(int width, int height) {	
-		initViewport(width, height, 16.0f / 9.0f);
-		/*
-		int virtualScreenWidth = SRuntime.getGameVirtualWidth();
-		int virtualScreenHeight = SRuntime.getGameVirtualHeight();
-		
-		
-		Vector2 size = Scaling.fill.apply(virtualScreenWidth, virtualScreenHeight, width, height);
-	    int viewportX = (int)(width - size.x) / 2;
-	    int viewportY = (int)(height - size.y) / 2;
-	    int viewportWidth = (int)size.x;
-	    int viewportHeight = (int)size.y;
-	    Gdx.gl.glViewport(viewportX, viewportY, viewportWidth, viewportHeight);	   
-	    stage.getViewport().update(viewportWidth, viewportHeight);	   
-	    */
+	//	initViewport(width, height, 16.0f / 9.0f);
+
+        setSize(width, height);
+
 	}
 	
 	public void initViewport(float width, float height, float aspect) {
 	      // Get the window size in pixels
 	      float w = Gdx.graphics.getWidth();
 	      float h = Gdx.graphics.getHeight();
-	       
+
 	      float vw, vh; // Viewport size in screen coordinates
 	      float ox, oy; // Viewport offset in screen coordinates
 	       
@@ -459,9 +500,13 @@ public class GameScreen extends SScreen
 	       
 	      // Set Y to point downwards
 	      camera.setToOrtho(false, width, height);
+
+          camera.zoom = SRuntime.SCALE_FACTOR;
 	       
 	      // Update camera matrix
 	      camera.update();
+
+
 	       
 	      // Set viewport to restrict drawing
 	      Gdx.gl20.glViewport((int)ox, (int)oy, (int)vw, (int)vh);
@@ -472,6 +517,7 @@ public class GameScreen extends SScreen
 		hidden = true;
 		SGame.changeScreen(SGame.eScreenTypes.EscapeMenu);
 		SInput.keyboardListeners.remove(this);
+        SInput.gamepadListeners.remove(this);
 		//hud.pauseGame();
 		
 		isPaused = true;
@@ -480,23 +526,10 @@ public class GameScreen extends SScreen
 	@Override
 	public void hide() {
 		SInput.keyboardListeners.remove(this);
-
+        SInput.gamepadListeners.remove(this);
 	}
 	
-	@Override
-	public boolean keyDown(int keycode) {
-		// TODO Auto-generated method stub
-		if(keycode == Keys.ESCAPE && !hidden)
-		{			
-			pauseGame();
-			return true;
-		}
-		if(keycode == Keys.SPACE)
-		{
-			toggleTempFreeCam();
-		}
-		return false;
-	}
+
 	
 	Vector2 oldPos = new Vector2(camera.position.x, camera.position.y);
 	private void toggleTempFreeCam()
@@ -518,19 +551,42 @@ public class GameScreen extends SScreen
 		temporaryFreeCamera = !temporaryFreeCamera;
 		
 	}
+
+    @Override
+    public boolean keyDown(int keycode) {
+        // TODO Auto-generated method stub
+        if(!hidden && keycode == Keys.ESCAPE)
+        {
+            pauseGame();
+            return true;
+        }
+        if(keycode == Keys.SPACE)
+        {
+            toggleTempFreeCam();
+        }
+
+        return false;
+    }
 	
 	@Override
 	public boolean buttonDown(Controller controller, int buttonIndex) {
-		
-		if(buttonIndex == 10 && !hidden) //change 10 to start button
+
+        if(SInput.getButtonIndexMatch(buttonIndex, SInput.eControllerButtons.Menu))
+		//if(!hidden && (buttonIndex == Ouya.BUTTON_MENU || buttonIndex == 7) ) //7 is xbox controller start button
 		{
 			pauseGame();
-			return true;
+            return true;
 		}
-		
-		
-		
-		return super.buttonDown(controller, buttonIndex);
+
+        if(SInput.getButtonIndexMatch(buttonIndex, SInput.eControllerButtons.CameraToggle)) //2 is x on xbox-controller
+        {
+            toggleTempFreeCam();
+            return true;
+        }
+
+
+
+		return false;
 	}
 
 }

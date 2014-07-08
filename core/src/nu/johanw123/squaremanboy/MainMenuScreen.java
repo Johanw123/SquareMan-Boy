@@ -115,6 +115,8 @@ public class MainMenuScreen extends SScreen
 	
 	@Override
 	public void render(float delta) {
+        super.render(delta);
+
         camera.update();
        
 		Gdx.gl.glClearColor(0, 0, 0, 0);

@@ -21,6 +21,8 @@ public class SRuntime
 
     public static int WORLD_WIDTH;
     public static int WORLD_HEIGHT;
+
+    public static float SCALE_FACTOR;
     
     public static boolean force720p;
     
@@ -37,13 +39,20 @@ public class SRuntime
         SCREEN_WIDTH_ALT = 1920;
         SCREEN_HEIGHT_ALT = 1080;
         
-        TILE_SIZE = 32;
+        TILE_SIZE = 128;
+
+        SCALE_FACTOR = TILE_SIZE / 32;
         
         force720p = getPrefs().getBoolean(PREFS_FORCE720P, true);
         force720p = true;
         musicOn = getPrefs().getBoolean(PREFS_MUSICON, true);
         cameraType = getPrefs().getInteger(PREFS_CAMERATYPE, 0);
-        System.out.println(cameraType);
+
+        if(cameraType != OptionsMenuScreen.eCameraType.Directed.ordinal() && cameraType != OptionsMenuScreen.eCameraType.Follow.ordinal())
+        {
+            cameraType = 0;
+        }
+
     }
 	
 	 private static Preferences preferences;

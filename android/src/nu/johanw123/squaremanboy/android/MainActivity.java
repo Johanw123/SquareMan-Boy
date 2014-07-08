@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
+import com.badlogic.gdx.controllers.mappings.Ouya;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
@@ -33,7 +34,7 @@ public class MainActivity extends AndroidApplication {
 		initialize(new SGame(), config);
 		
 		*/
-		SGame.CurrentPlatform = SGame.ePlatform.Android;
+		SGame.CurrentPlatform = Ouya.runningOnOuya ? SGame.ePlatform.Ouya : SGame.ePlatform.Android;
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		//config.resolutionStrategy.calcMeasures(1280, 720);
 	          

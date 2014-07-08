@@ -80,6 +80,8 @@ public class TrainingEndScreen extends SScreen
 	
 	@Override
 	public void render(float delta) {
+        super.render(delta);
+
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
@@ -91,8 +93,10 @@ public class TrainingEndScreen extends SScreen
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
-        SGame.font.draw(batch, "Training mode is over!", SRuntime.SCREEN_WIDTH/2, SRuntime.SCREEN_HEIGHT/2 - 100);
-      
+
+        String text = "Training mode is over!";
+
+        SGame.font.draw(batch, text, SRuntime.SCREEN_WIDTH/2 - SGame.font.getBounds(text).width / 2, SRuntime.SCREEN_HEIGHT/2 - 50);
         batch.end();
 
 	}
