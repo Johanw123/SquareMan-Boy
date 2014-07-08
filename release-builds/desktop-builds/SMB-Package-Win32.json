@@ -1,0 +1,15 @@
+{
+    "platform": "windows",
+    "jdk": "OJDKs/openjdk-1.7.0-u60-unofficial-windows-i586-image.zip",
+    "executable": "SquareMan-Boy",
+    "appjar": "SquareMan-Boy.jar",
+    "mainclass": "nu/johanw123/squaremanboy/desktop/Main",
+    "vmargs": [
+       "-Xmx1G"
+    ],
+    "resources": [
+
+    ],
+    "minimizejre": "soft",
+    "outdir": "out/SMB-win32"
+}

@@ -1,0 +1,15 @@
+{
+    "platform": "mac",
+    "jdk": "OJDKs/openjdk-1.7.0-u60-unofficial-macosx-x86_64-image.zip",
+    "executable": "SquareMan-Boy",
+    "appjar": "SquareMan-Boy.jar",
+    "mainclass": "nu/johanw123/squaremanboy/desktop/Main",
+    "vmargs": [
+       "-Xmx1G"
+    ],
+    "resources": [
+
+    ],
+    "minimizejre": "soft",
+    "outdir": "out/SMB-mac"
+}
