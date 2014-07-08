@@ -181,8 +181,6 @@ public class Player extends Entity
         
 
         mBoundingBox.set(getX(), getY(), getTexture().getWidth(), getTexture().getHeight());
-        
-        
 	}
 	
 	@Override
