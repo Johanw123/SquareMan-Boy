@@ -43,7 +43,7 @@ public class SurvivalEndScreen extends SScreen
 	
 	private void setupButtons()
 	{
-		 buttonHandler.createButton("Submit Score", new EventListener() {
+		 buttonHandler.createTextButton("Submit Score", new EventListener() {
 				@Override
 				public boolean handle(Event event) {
 					if(event.toString() == "ButtonActivated")
@@ -57,7 +57,20 @@ public class SurvivalEndScreen extends SScreen
 				}
 	        });
 
-	        buttonHandler.createButton("Play Again", new EventListener() {
+       // if(SGame.CurrentPlatform == SGame.ePlatform.Ouya || SGame.CurrentPlatform == SGame.ePlatform.Android) {
+        /*
+            buttonHandler.createTextButton("Buy Extra Life (IAP)", new EventListener() {
+                @Override
+                public boolean handle(Event event) {
+                    if (event.toString() == "ButtonActivated") {
+                        SGame.changeScreen(SGame.eScreenTypes.Game, "replaylevel");
+                    }
+                    return false;
+                }
+            });
+        */
+        //}
+	        buttonHandler.createTextButton("Play Again", new EventListener() {
 				@Override
 				public boolean handle(Event event) {
 					if(event.toString() == "ButtonActivated")
@@ -70,7 +83,7 @@ public class SurvivalEndScreen extends SScreen
 				}
 	        });
 	        
-	        buttonHandler.createButton("Back to Menu", new EventListener() {
+	        buttonHandler.createTextButton("Back to Menu", new EventListener() {
 				@Override
 				public boolean handle(Event event) {
 					if(event.toString() == "ButtonActivated")
@@ -135,6 +148,7 @@ public class SurvivalEndScreen extends SScreen
         	if(status != "Uploading score...")
         	{
         		buttonHandler.disableButton("Submit Score");
+                buttonHandler.disableButton("Buy Extra Life (IAP)");
                 buttonHandler.setSelectedButton("Play Again");
         	}
         	

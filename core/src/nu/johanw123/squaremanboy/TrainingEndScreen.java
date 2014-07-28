@@ -38,7 +38,7 @@ public class TrainingEndScreen extends SScreen
 	
 	private void setupButtons()
 	{
-		 buttonHandler.createButton("Play Training Again", new EventListener() {
+		 buttonHandler.createTextButton("Play Training Again", new EventListener() {
 				@Override
 				public boolean handle(Event event) {
 					if(event.toString() == "ButtonActivated")
@@ -50,7 +50,7 @@ public class TrainingEndScreen extends SScreen
 				}
 	        });   
 		 
-	        buttonHandler.createButton("Play Survival Mode", new EventListener() {
+	        buttonHandler.createTextButton("Play Survival Mode", new EventListener() {
 				@Override
 				public boolean handle(Event event) {
 					if(event.toString() == "ButtonActivated")
@@ -62,7 +62,7 @@ public class TrainingEndScreen extends SScreen
 				}
 	        });
 	        
-	        buttonHandler.createButton("Back to Menu", new EventListener() {
+	        buttonHandler.createTextButton("Back to Menu", new EventListener() {
 				@Override
 				public boolean handle(Event event) {
 					if(event.toString() == "ButtonActivated")

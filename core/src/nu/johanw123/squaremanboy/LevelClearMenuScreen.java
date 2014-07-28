@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.Timer;
@@ -58,21 +59,30 @@ public class LevelClearMenuScreen extends SScreen
     }
 	
 	private void setupButtons()
-	{			
-		buttonHandler.createButton("Main Menu", new EventListener() {
-			@Override
-			public boolean handle(Event event) {
-				if(event.toString() == "ButtonActivated")
-				{
-					SGame.changeScreen(SGame.eScreenTypes.MainMenu);
-				}
-				return false;
-			}
-        }, 50, 50, 200, 70);
-		
+	{
+
+        if((SGame.GameMode == SGame.eGameMode.Survival && SGame.CurrentPlatform == SGame.ePlatform.Android)
+                || SGame.GameMode == SGame.eGameMode.Training)
+        {
+
+            Button button = buttonHandler.createTextButton("Main Menu", new EventListener() {
+                @Override
+                public boolean handle(Event event) {
+                    if (event.toString() == "ButtonActivated") {
+                        SGame.changeScreen(SGame.eScreenTypes.MainMenu);
+                    }
+                    return false;
+                }
+            });
+            button.setPosition(50, 50);
+            button.setSize(200, 70);
+
+        }
 		if(SGame.GameMode == SGame.eGameMode.Training)
 		{
-			buttonHandler.createButton("Select Level", new EventListener() {
+
+
+            Button button = buttonHandler.createTextButton("Select Level", new EventListener() {
 				@Override
 				public boolean handle(Event event) {
 					if(event.toString() == "ButtonActivated")
@@ -81,10 +91,12 @@ public class LevelClearMenuScreen extends SScreen
 					}
 					return false;
 				}
-	        }, 400, 50, 200, 70);
-			
-			
-			buttonHandler.createButton("Replay Level", new EventListener() {
+	              });
+            button.setPosition(400, 50);
+            button.setSize(200, 70);
+
+
+            button = buttonHandler.createTextButton("Replay Level", new EventListener() {
 				@Override
 				public boolean handle(Event event) {
 					if(event.toString() == "ButtonActivated")
@@ -93,11 +105,13 @@ public class LevelClearMenuScreen extends SScreen
 					}
 					return false;
 				}
-	        }, 650, 50, 200, 70);
+	              });
+            button.setPosition(650, 50);
+            button.setSize(200, 70);
 			
-		}		
-		
-	 buttonHandler.createButton("Next Level", new EventListener() {
+		}
+
+        Button button = buttonHandler.createTextButton("Next Level", new EventListener() {
 			@Override
 			public boolean handle(Event event) {
 				if(event.toString() == "ButtonActivated")
@@ -106,7 +120,9 @@ public class LevelClearMenuScreen extends SScreen
 				}
 				return false;
 			}
-        }, SRuntime.SCREEN_WIDTH - 250, 50, 200, 70);
+             });
+        button.setPosition(SRuntime.SCREEN_WIDTH - 250, 50);
+        button.setSize(200, 70);
 		
      buttonHandler.setSelectedButton(3);
 	}

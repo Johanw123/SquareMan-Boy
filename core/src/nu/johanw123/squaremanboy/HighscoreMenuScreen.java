@@ -32,7 +32,7 @@ public class HighscoreMenuScreen extends SScreen
 	
 	private void setupButtons()
 	{
-		 buttonHandler.createButton("Back", new EventListener() {
+		 buttonHandler.createTextButton("Back", new EventListener() {
 				@Override
 				public boolean handle(Event event) {
 					if(event.toString() == "ButtonActivated")

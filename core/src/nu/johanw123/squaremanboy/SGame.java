@@ -150,7 +150,9 @@ public class SGame extends Game {
         stage = new Stage();
         
 
-        sInput = new SInput();        
+        sInput = new SInput();
+
+        foundControllers = new ArrayList<Controller>();
         
         for (Controller controller : Controllers.getControllers()) {
             System.out.println(controller.getName());
@@ -176,15 +178,23 @@ public class SGame extends Game {
         
 
         buttonHandler = new ButtonHandler();
-        
-       
-        
-        Timer.schedule(new Task(){
-            @Override
-            public void run() {
-            	SGame.changeScreen(eScreenTypes.SplashMenu);
-            }
-        }, 0.2f);
+
+        if(SGame.CurrentPlatform == ePlatform.Ouya) {
+            Timer.schedule(new Task() {
+                @Override
+                public void run() {
+                    SGame.changeScreen(eScreenTypes.MainMenu);
+                }
+            }, 0.2f);
+        }
+        else {
+            Timer.schedule(new Task() {
+                @Override
+                public void run() {
+                    SGame.changeScreen(eScreenTypes.SplashMenu);
+                }
+            }, 0.2f);
+        }
         
     }    
 
@@ -327,10 +337,19 @@ public class SGame extends Game {
     	}
     	
 		((OrthographicCamera) SGame.stage.getCamera()).setToOrtho(false, virtualWidth, virtualHeight);
+        //((OrthographicCamera) SGame.stage.getCamera()).zoom = SRuntime.SCALE_FACTOR;
+
     	//if(screenType == eScreenTypes.Game)
     		//gameScreen.SetCameraOnPlayer();
     	
-    	//currentScreen.resize(1280, 720); 
+    	//currentScreen.resize(1280, 720);
+
+
+        if(screenType == eScreenTypes.Game && command == "resume")
+        {
+            ((GameScreen)currentScreen).setPausedCamPos();
+        }
+
     }
 
     @Override

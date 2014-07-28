@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 public class HUD 
@@ -24,18 +25,17 @@ public class HUD
 	{
 		gameScreen = _gameScreen;
 
-
 		((OrthographicCamera) pauseStage.getCamera()).setToOrtho(false, 1280, 720);
-						
-		setupButtonsPause();
-		
+
+        if(SGame.CurrentPlatform == SGame.ePlatform.Android)
+		    setupButtonsPause();
 	}
 	
 	private void setupButtonsPause()
 	{
 		SGame.multiplexer.addProcessor(pauseStage);
 		
-		SGame.buttonHandler.createButton("Menu", new EventListener() {
+		Button button = SGame.buttonHandler.createTextButton("Menu", new EventListener() {
 			@Override
 			public boolean handle(Event event) {
 				if(event.toString() == "ButtonActivated")
@@ -44,7 +44,9 @@ public class HUD
 				}
 				return false;
 			}
-        }, 0, 0, 100, 40, pauseStage);
+             }, pauseStage);
+        button.setPosition(0,0);
+        button.setSize(100, 40);
 		
 		//SGame.buttonHandler.clearButtons();
 	}
@@ -53,7 +55,7 @@ public class HUD
 	{	
 		SGame.multiplexer.addProcessor(menuStage);
 		
-		SGame.buttonHandler.createButton("Resume Game", new EventListener() {
+		SGame.buttonHandler.createTextButton("Resume Game", new EventListener() {
 				@Override
 				public boolean handle(Event event) {
 					if(event.toString() == "ButtonActivated")
@@ -64,7 +66,7 @@ public class HUD
 	        
 	    if(SGame.GameMode == SGame.eGameMode.Training)
 	    {	    
-	    	SGame.buttonHandler.createButton("Select Level", new EventListener() {
+	    	SGame.buttonHandler.createTextButton("Select Level", new EventListener() {
 	 			@Override
 	 			public boolean handle(Event event) {
 	 				if(event.toString() == "ButtonActivated")
@@ -79,7 +81,7 @@ public class HUD
 	         }, menuStage);
 	    }
 	    
-	    SGame.buttonHandler.createButton("Back to Menu", new EventListener() {
+	    SGame.buttonHandler.createTextButton("Back to Menu", new EventListener() {
 			@Override
 			public boolean handle(Event event) {
 				if(event.toString() == "ButtonActivated")
@@ -192,14 +194,16 @@ public class HUD
 				}
 	        };
         	
-	        SGame.buttonHandler.createButton(SGame.levelNamesArray[i + page * 7], eventListener, x, y, buttonWidth, buttonHeight, menuStage);        	
+	        Button button = SGame.buttonHandler.createTextButton(SGame.levelNamesArray[i + page * 7], eventListener, menuStage);
+            button.setPosition(x, y);
+            button.setSize(buttonWidth, buttonHeight);
         }
         
         SGame.buttonHandler.setSelectedButton(0);
         
         if(createForwardsButton)
     	{        	
-        	SGame.buttonHandler.createButton(">", new EventListener() {
+        	Button button = SGame.buttonHandler.createTextButton(">", new EventListener() {
   				@Override
   				public boolean handle(Event event) {
   					if(event.toString() == "ButtonActivated")
@@ -211,12 +215,15 @@ public class HUD
   					}
   					return false;
   				}
-  	        }, 800, 300, 400, 70, menuStage);    
+  	                }, menuStage);
+            button.setPosition(800, 300);
+            button.setSize(400, 70);
     	}
+
 
     	if(createBackwardsButton)
     	{        	
-    		SGame.buttonHandler.createButton("<", new EventListener() {
+    		Button button = SGame.buttonHandler.createTextButton("<", new EventListener() {
  				@Override
  				public boolean handle(Event event) {
  					if(event.toString() == "ButtonActivated")
@@ -228,11 +235,13 @@ public class HUD
  					}
  					return false;
  				}
- 	        }, 800, 200, 400, 70, menuStage);        	
+ 	                }, menuStage);
+            button.setPosition(800, 200);
+            button.setSize(400, 70);
     	}
-    	
-    	
-    	SGame.buttonHandler.createButton("Back", new EventListener() {
+
+
+    	Button button = SGame.buttonHandler.createTextButton("Back", new EventListener() {
 				@Override
 				public boolean handle(Event event) {
 					if(event.toString() == "ButtonActivated")
@@ -242,7 +251,9 @@ public class HUD
 					}
 					return false;
 				}
-	        }, 800, 100, 400, 70, menuStage);  
+	          }, menuStage);
+        button.setPosition(800, 100);
+        button.setSize(400, 70);
 		
 	}
 	

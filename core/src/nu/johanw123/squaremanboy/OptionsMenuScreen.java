@@ -34,7 +34,7 @@ public class OptionsMenuScreen extends SScreen
 	public OptionsMenuScreen(SGame _game) 
 	{
 		super(_game);
-  
+
 		buttonHandler.addListeners();
 		
 		if(SRuntime.force720p)
@@ -80,7 +80,7 @@ public class OptionsMenuScreen extends SScreen
 		*/
 		//buttonHandler.getButton("Gameplay Resolution").setText("Gameplay Resolution: Native");
 		
-		buttonHandler.createButton("Music", new EventListener() {
+		buttonHandler.createTextButton("Music", new EventListener() {
 			@Override
 			public boolean handle(Event event) {
 				if(event.toString() == "ButtonActivated")
@@ -97,7 +97,7 @@ public class OptionsMenuScreen extends SScreen
 			}
         });
 		
-		buttonHandler.createButton("Camera Type", new EventListener() {
+		buttonHandler.createTextButton("Camera Type", new EventListener() {
 			@Override
 			public boolean handle(Event event) {
 				if(event.toString() == "ButtonActivated")
@@ -112,7 +112,7 @@ public class OptionsMenuScreen extends SScreen
 		
 		
 	
-			 buttonHandler.createButton("Back", new EventListener() {
+			 buttonHandler.createTextButton("Back", new EventListener() {
 					@Override
 					public boolean handle(Event event) {
 						if(event.toString() == "ButtonActivated")
@@ -132,9 +132,9 @@ public class OptionsMenuScreen extends SScreen
 	private void setMusicButtonText()
 	{
 		if(SRuntime.musicOn)
-			buttonHandler.getButton("Music").setText("Music: ON");
+			buttonHandler.getTextButton("Music").setText("Music: ON");
 		else
-			buttonHandler.getButton("Music").setText("Music: OFF");
+			buttonHandler.getTextButton("Music").setText("Music: OFF");
 	}
 	
 	private void toggleResolution()
@@ -180,7 +180,7 @@ public class OptionsMenuScreen extends SScreen
 	
 	private void setButtonCameraType()
 	{
-		buttonHandler.getButton("Camera Type").setText("Camera Type: " + currentCameraType.toString());
+		buttonHandler.getTextButton("Camera Type").setText("Camera Type: " + currentCameraType.toString());
 	}
 	
 	private void setButton()

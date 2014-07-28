@@ -16,6 +16,9 @@ public class Player extends Entity
 {
     private Vector2 startPosition;
     public Vector2 freeCameraPosition;
+    public static float freeZoomScale = SRuntime.SCALE_FACTOR;
+
+    public boolean bothTouchDown = false;
 
 	public Player(float x, float y)
 	{
@@ -42,57 +45,68 @@ public class Player extends Entity
     }
 	
 	public void handleInput(float deltaTime)
-	{		
-		if(SGame.CurrentPlatform == SGame.ePlatform.Android)
-		{
-			for(int i = 0; i < 2; ++i)
-			{
-				if(Gdx.input.isTouched(i))
-				{
-					SGame.stage.getCamera().unproject(new Vector3(Gdx.input.getX(i), Gdx.input.getY(i), 0));
-					if(Gdx.input.getX(i) > SRuntime.SCREEN_WIDTH/2)
-					{						
-					    this.translateX(600 * SRuntime.SCALE_FACTOR * deltaTime);
-					}
-		            else if(Gdx.input.getX(i) < SRuntime.SCREEN_WIDTH/2)
-		            {
-		            	if(Gdx.input.getX(i) < 150 && Gdx.input.getY(i) > Gdx.graphics.getHeight() - 100)
-		            		continue;
-		            	
-		                this.translateX(-600 * SRuntime.SCALE_FACTOR * deltaTime);
-		            }					
-				}
-			}
-		}
+	{
+        boolean leftTouchDown = false;
+        boolean rightTouchDown = false;
+        bothTouchDown = false;
+
+		if(SGame.CurrentPlatform == SGame.ePlatform.Android) {
+            for (int i = 0; i < 2; ++i) {
+                if (Gdx.input.isTouched(i)) {
+                    SGame.stage.getCamera().unproject(new Vector3(Gdx.input.getX(i), Gdx.input.getY(i), 0));
+                    if (Gdx.input.getX(i) > SRuntime.SCREEN_WIDTH / 2) {
+                        rightTouchDown = true;
+                    } else if (Gdx.input.getX(i) < SRuntime.SCREEN_WIDTH / 2) {
+                        if (Gdx.input.getX(i) < 150 && Gdx.input.getY(i) > Gdx.graphics.getHeight() - 100)
+                            continue;
+
+                        leftTouchDown = true;
+                    }
+                }
+            }
+
+            if (!GameScreen.temporaryFreeCamera) {
+                if (rightTouchDown && leftTouchDown) {
+                    bothTouchDown = true;
+                } else if (rightTouchDown) {
+                    this.translateX(600 * SRuntime.SCALE_FACTOR * deltaTime);
+                } else if (leftTouchDown) {
+                    this.translateX(-600 * SRuntime.SCALE_FACTOR * deltaTime);
+                }
+            }
+        }
+        boolean hasMoved = false;
 
         if(SGame.activeController != null) {
             float axis = SGame.activeController.getAxis(Ouya.AXIS_LEFT_X);
             if (checkAxis(axis)) {
-                this.translateX((600 * SRuntime.SCALE_FACTOR * axis) * deltaTime);
+                if(!hasMoved) {
+                    this.translateX((600 * SRuntime.SCALE_FACTOR * axis) * deltaTime);
+                    hasMoved = true;
+                }
             }
         }
-		
-		if((SGame.activeController != null && SGame.activeController.getAxis(Ouya.AXIS_LEFT_TRIGGER) > 0.1f))
-		{
-			this.translateX((600 * SRuntime.SCALE_FACTOR * -SGame.activeController.getAxis(Ouya.AXIS_LEFT_TRIGGER)) * deltaTime);
-		}
-		if((SGame.activeController != null && SGame.activeController.getAxis(Ouya.AXIS_RIGHT_TRIGGER) > 0.1f))
-		{
-			this.translateX((600 * SRuntime.SCALE_FACTOR * SGame.activeController.getAxis(Ouya.AXIS_RIGHT_TRIGGER)) * deltaTime);
-		}
 
-		if(Gdx.input.isKeyPressed(Keys.LEFT) || Gdx.input.isButtonPressed(Ouya.BUTTON_DPAD_LEFT) ||
+
+		if(Gdx.input.isKeyPressed(Keys.LEFT) || (SGame.activeController != null &&SGame.activeController.getButton(Ouya.BUTTON_DPAD_LEFT)) ||
 				(SGame.activeController != null && SGame.activeController.getPov(0) == PovDirection.west))
         {
-			this.translateX((-600 * SRuntime.SCALE_FACTOR) * deltaTime);
+            if(!hasMoved) {
+                this.translateX((-600 * SRuntime.SCALE_FACTOR) * deltaTime);
+                hasMoved = true;
+            }
 		}
-        if(Gdx.input.isKeyPressed(Keys.RIGHT) || Gdx.input.isButtonPressed(Ouya.BUTTON_DPAD_RIGHT) ||
+
+        if(Gdx.input.isKeyPressed(Keys.RIGHT) || (SGame.activeController != null && SGame.activeController.getButton(Ouya.BUTTON_DPAD_RIGHT)) ||
                 (SGame.activeController != null && SGame.activeController.getPov(0) == PovDirection.east))
 
         {
-            this.translateX((600 * SRuntime.SCALE_FACTOR) * deltaTime);
-
+            if(!hasMoved) {
+                this.translateX((600 * SRuntime.SCALE_FACTOR) * deltaTime);
+                hasMoved = true;
+            }
         }
+
         if(SGame.activeController != null) {
             float axis = SGame.activeController.getAxis(Ouya.AXIS_RIGHT_X);
             if (checkAxis(axis)) {
@@ -181,8 +195,6 @@ public class Player extends Entity
         
 
         mBoundingBox.set(getX(), getY(), getTexture().getWidth(), getTexture().getHeight());
-        
-        
 	}
 	
 	@Override

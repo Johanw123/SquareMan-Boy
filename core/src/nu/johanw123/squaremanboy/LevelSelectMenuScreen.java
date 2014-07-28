@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -77,14 +78,16 @@ public class LevelSelectMenuScreen extends SScreen
 				}
 	        };
         	
-        	buttonHandler.createButton(SGame.levelNamesArray[i + page * 7].substring(0, SGame.levelNamesArray[i + page * 7].lastIndexOf('.')), eventListener, x, y, buttonWidth, buttonHeight);        	
+        	Button button = buttonHandler.createTextButton(SGame.levelNamesArray[i + page * 7].substring(0, SGame.levelNamesArray[i + page * 7].lastIndexOf('.')), eventListener);
+            button.setPosition(x, y);
+            button.setSize(buttonWidth, buttonHeight);
         }
         
 
         
         if(createForwardsButton)
     	{        	
-        	 buttonHandler.createButton(">", new EventListener() {
+        	 Button button = buttonHandler.createTextButton(">", new EventListener() {
   				@Override
   				public boolean handle(Event event) {
   					if(event.toString() == "ButtonActivated")
@@ -96,39 +99,41 @@ public class LevelSelectMenuScreen extends SScreen
   					}
   					return false;
   				}
-  	        }, 800, 300, 400, 70);    
+  	                });
+            button.setPosition(800, 300);
+            button.setSize(400, 70);
+
     	}
 
     	if(createBackwardsButton)
     	{        	
-        	 buttonHandler.createButton("<", new EventListener() {
- 				@Override
- 				public boolean handle(Event event) {
- 					if(event.toString() == "ButtonActivated")
- 					{
- 						changePage(-1);
- 						buttonHandler.setSelectedButton(0);
- 						if(!buttonHandler.setSelectedButton("<"))
- 							buttonHandler.setSelectedButton(">");
- 					}
- 					return false;
- 				}
- 	        }, 800, 200, 400, 70);        	
+        	 Button button = buttonHandler.createTextButton("<", new EventListener() {
+                 @Override
+                 public boolean handle(Event event) {
+                     if (event.toString() == "ButtonActivated") {
+                         changePage(-1);
+                         buttonHandler.setSelectedButton(0);
+                         if (!buttonHandler.setSelectedButton("<"))
+                             buttonHandler.setSelectedButton(">");
+                     }
+                     return false;
+                 }
+             });
+            button.setPosition(800, 200);
+            button.setSize(400, 70);
     	}
-    	
-    	
-    	buttonHandler.createButton("Back to Menu", new EventListener() {
-				@Override
-				public boolean handle(Event event) {
-					if(event.toString() == "ButtonActivated")
-					{
-						SGame.changeScreen(SGame.eScreenTypes.MainMenu);
-					}
-					return false;
-				}
-	        }, 800, 100, 400, 70);
 
-
+    	Button button = buttonHandler.createTextButton("Back to Menu", new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event.toString() == "ButtonActivated") {
+                    SGame.changeScreen(SGame.eScreenTypes.MainMenu);
+                }
+                return false;
+            }
+        });
+        button.setPosition(800, 100);
+        button.setSize(400, 70);
 
         buttonHandler.setSelectedButton(0);
         buttonHandler.setMenuBackButton("Back to Menu");

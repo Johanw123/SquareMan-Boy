@@ -1,7 +1,7 @@
 #!/bin/bash
 #!/bin/bash
 ./gradlew desktop:dist
-cp desktop/build/libs/desktop-1.0.jar release-builds/desktop-builds/SquareMan-Boy.jar
+cp desktop/build/libs/desktop-1.2.0.jar release-builds/desktop-builds/SquareMan-Boy.jar
 cd release-builds/desktop-builds/
 java -jar packr.jar SMB-Package-Linux32.json
 java -jar packr.jar SMB-Package-Linux64.json

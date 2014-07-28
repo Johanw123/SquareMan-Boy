@@ -9,6 +9,8 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.controllers.mappings.Ouya;
+import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 /**
@@ -30,6 +32,7 @@ interface STouchListener
 {
 	public boolean touchDown(int x, int y, int pointer, int button);
 	public boolean touchUp(int x, int y, int pointer, int button);
+    boolean touchDragged (int x, int y, int pointer);
 }
 
 public class SInput implements InputProcessor, ControllerListener
@@ -118,12 +121,14 @@ public class SInput implements InputProcessor, ControllerListener
 			// TODO Auto-generated method stub
 			return false;
 		}
+
 		@Override
 		public boolean accelerometerMoved(Controller arg0, int arg1,
 				Vector3 arg2) {
 			// TODO Auto-generated method stub
 			return false;
 		}
+
 		@Override
 		public boolean axisMoved(Controller controller, int axisIndex, float value) {
 			for (SGamepadListener hl : gamepadListeners)
@@ -134,8 +139,17 @@ public class SInput implements InputProcessor, ControllerListener
 
 			return false;
 		}
+
 		@Override
 		public boolean buttonDown(Controller controller, int buttonIndex) {
+
+            for (Controller c : SGame.foundControllers) {
+                c.removeListener(SGame.sInput);
+            }
+
+            SGame.activeController = controller;
+            SGame.activeController.addListener(SGame.sInput);
+
 			for (SGamepadListener hl : gamepadListeners)
 	        {
 	            if(hl.buttonDown(controller, buttonIndex))
@@ -144,6 +158,7 @@ public class SInput implements InputProcessor, ControllerListener
 
 			return false;
 		}
+
 		@Override
 		public boolean buttonUp(Controller arg0, int arg1) {
 			// TODO Auto-generated method stub
@@ -180,7 +195,8 @@ public class SInput implements InputProcessor, ControllerListener
 			return false;
 		}
 
-        public enum eControllerButtons
+
+    public enum eControllerButtons
         {
             Menu,
             Menu_Accept,

@@ -25,7 +25,7 @@ public class EscapeMenuScreen extends SScreen
 	
 	private void setupButtons()
 	{
-		 buttonHandler.createButton("Resume Game", new EventListener() {
+		 buttonHandler.createTextButton("Resume Game", new EventListener() {
 				@Override
 				public boolean handle(Event event) {
 					if(event.toString() == "ButtonActivated")
@@ -37,7 +37,7 @@ public class EscapeMenuScreen extends SScreen
 	    if(SGame.GameMode == SGame.eGameMode.Training)
 	    {
 	    
-	    	 buttonHandler.createButton("Select Level", new EventListener() {
+	    	 buttonHandler.createTextButton("Select Level", new EventListener() {
 	 			@Override
 	 			public boolean handle(Event event) {
 	 				if(event.toString() == "ButtonActivated")
@@ -51,7 +51,7 @@ public class EscapeMenuScreen extends SScreen
 	    }
 	    
 	    final EscapeMenuScreen thisMenu =  this;
-	    buttonHandler.createButton("Back to Menu", new EventListener() {
+	    buttonHandler.createTextButton("Back to Menu", new EventListener() {
 			@Override
 			public boolean handle(Event event) {
 				if(event.toString() == "ButtonActivated")

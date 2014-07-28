@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.mappings.Ouya;
-import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -48,15 +47,20 @@ public class GameScreen extends SScreen
     boolean updateCamY = false;
     float camDestX = 0;
     float camDestY = 0;
-    
-    private boolean temporaryFreeCamera = false;
+
+    float mapZoomScale = SRuntime.SCALE_FACTOR;
+
+    private float mapCameraStartX;
+    private float mapCameraStartY;
+
+    public static boolean temporaryFreeCamera = false;
     
     private HUD hud = new HUD(this);
     
     long timeCount;
     long levelTime;
 
-    private FPSLogger fpsLogger;
+   // private FPSLogger fpsLogger;
     
 
     private Pool<Rectangle> rectPool = new Pool<Rectangle>() {
@@ -74,7 +78,7 @@ public class GameScreen extends SScreen
 
 		shapeRenderer = new ShapeRenderer();
 
-        fpsLogger = new FPSLogger();
+        //fpsLogger = new FPSLogger();
 		//setupButtons();
 	}
 
@@ -95,6 +99,16 @@ public class GameScreen extends SScreen
         SRuntime.WORLD_WIDTH = tileLayer.getWidth();
         SRuntime.WORLD_HEIGHT = tileLayer.getHeight();
 
+        Object propCamStartX = map.getProperties().get("camStartX");
+        Object propCamStartY = map.getProperties().get("camStartY");
+        Object propZoom = map.getProperties().get("zoom");
+
+        mapCameraStartX = (propCamStartX != null ? Float.parseFloat(propCamStartX.toString()) : 600) * SRuntime.SCALE_FACTOR; //TODO set in map properties
+        mapCameraStartY = (propCamStartY != null ? Float.parseFloat(propCamStartY.toString()) : 300) * SRuntime.SCALE_FACTOR; //TODO set in map properties
+
+        mapZoomScale = propZoom != null ? Float.parseFloat(propZoom.toString()) : SRuntime.SCALE_FACTOR; //TODO set in map properties
+
+
         for(MapObject object : objectLayer.getObjects())
         {
             if(object != null && object.getName() != null)
@@ -105,6 +119,7 @@ public class GameScreen extends SScreen
                     //case "Player":
                         RectangleMapObject rectangleMapObject = (RectangleMapObject)object;
                         player = new Player(rectangleMapObject.getRectangle().x, rectangleMapObject.getRectangle().y);
+                        //player.freeZoomScale = mapZoomScale;
                       //  break;
                 }
             }
@@ -126,27 +141,34 @@ public class GameScreen extends SScreen
                 
                 //camera.position.x = SRuntime.WORLD_WIDTH;
                 
-                if(SRuntime.cameraType == 0)
-                {
-	        		camera.position.y = 300 * SRuntime.SCALE_FACTOR;
-	        		camera.position.x = 600 * SRuntime.SCALE_FACTOR;
-                }
-                else
-                {
-                	SetCameraOnPlayer();
-                }
+               // if(SRuntime.cameraType == 0)
+               // {
+                    //TODO set a start cam position in map to set here
+
+                    camera.position.x = mapCameraStartX;
+	        		camera.position.y = mapCameraStartY;
+
+                    camera.zoom = mapZoomScale;
+
+                    oldPos.x = camera.position.x;
+                    oldPos.y = camera.position.y;
+
+                    player.freeCameraPosition.x = camera.position.x;
+                    player.freeCameraPosition.y = camera.position.y;
+
+
+               // }
+               // else
+              //  {
+              //  	SetCameraOnPlayer();
+              //  }
                 
                 timeCount = TimeUtils.nanoTime();
             }
         }, delay); 
         
     }
-    
-    public void SetCameraOnPlayer()
-	{   	
-		camera.position.x = player.getX();
-        camera.position.y = player.getY();       
-	}
+
 
     @Override
 	public void update(float delta)
@@ -194,15 +216,35 @@ public class GameScreen extends SScreen
 	    		break;
 	    	case 2:
 	    		updateCameraFree();
+
+
 	    		break;
     	}
+
+
     	
     }
-    
+
     private void updateCameraFree()
     {
     	camera.position.x = player.freeCameraPosition.x; 
-    	camera.position.y = player.freeCameraPosition.y;  
+    	camera.position.y = player.freeCameraPosition.y;
+
+        if((SGame.activeController != null && SGame.activeController.getAxis(Ouya.AXIS_LEFT_TRIGGER) > 0.1f) || SInput.isKeyDown(Keys.Q))
+        {
+            player.freeZoomScale -= 0.1f;
+            if(player.freeZoomScale < 0.5f)
+                player.freeZoomScale = 0.5f;
+        }
+        if((SGame.activeController != null && SGame.activeController.getAxis(Ouya.AXIS_RIGHT_TRIGGER) > 0.1f) || SInput.isKeyDown(Keys.E))
+        {
+            player.freeZoomScale += 0.1f;
+            if(player.freeZoomScale > 10.0f)
+                player.freeZoomScale = 10.0f;
+        }
+
+        camera.zoom = player.freeZoomScale;
+
     	camera.update();
     }
     
@@ -341,12 +383,12 @@ public class GameScreen extends SScreen
                     tile.set(x * SRuntime.TILE_SIZE, y * SRuntime.TILE_SIZE, SRuntime.TILE_SIZE, SRuntime.TILE_SIZE);
                     tiles.add(tile);
 
-                    if (player.getBoundingBox().overlaps(tile)) 
+                    if (player.getBoundingBox().overlaps(tile))
                     {
                         if(player.handleTileCollision(cell.getTile().getId()))
                         {
                         	//Level finished
-                        	levelTime = TimeUtils.timeSinceNanos(timeCount);
+                        	levelTime = TimeUtils.timeSinceNanos(timeCount) - pauseTime;
                         	float levelTimeF = TimeUtils.nanosToMillis(levelTime);
                         	levelTimeF /= 1000;
 
@@ -388,7 +430,7 @@ public class GameScreen extends SScreen
         Table.drawDebug(stage);
 
         //Gdx.graphics.setTitle(""+Gdx.graphics.getFramesPerSecond());
-        fpsLogger.log();
+        //fpsLogger.log();
 
 		renderer.setView((OrthographicCamera) camera);
 		renderer.render();
@@ -410,18 +452,38 @@ public class GameScreen extends SScreen
 		
 	}
 
+
+    public void setPausedCamPos()
+    {
+        if(pausedCamX != null)
+            camera.position.x = pausedCamX;
+        if(pausedCamY != null)
+            camera.position.y = pausedCamY;
+    }
+
+
+
 	@Override
 	public void show() {
 		hidden = false;
+
 		//SetCameraOnPlayer();
-		
+
+
+
 
 		//camera.position.x = SRuntime.WORLD_WIDTH;
 		//camera.position.y = 530;
     	
 		
 		SInput.addKeyboardListener(this);
+        SInput.addTouchListener(this);
         SInput.addGamepadListener(this);
+
+        if(isPaused) {
+            isPaused = false;
+            pauseTime += TimeUtils.timeSinceNanos(timePausedCount);
+        }
 	}
 
     public void setSize(int width, int height)
@@ -433,7 +495,7 @@ public class GameScreen extends SScreen
             //Allows for resize on desktop
         virtualScreenWidth = width;
         virtualScreenHeight = height;
-    }
+        }
 
         Vector2 size = Scaling.fill.apply(virtualScreenWidth, virtualScreenHeight, width, height);
         int viewportX = (int)(width - size.x) / 2;
@@ -511,12 +573,26 @@ public class GameScreen extends SScreen
 	      // Set viewport to restrict drawing
 	      Gdx.gl20.glViewport((int)ox, (int)oy, (int)vw, (int)vh);
 	   }
-	
+
+
+    Float pausedCamX = null;
+    Float pausedCamY = null;
+
+    long timePausedCount = 0;
+    long pauseTime = 0;
+
 	public void pauseGame()
 	{
 		hidden = true;
+
+        pausedCamX = camera.position.x;
+        pausedCamY = camera.position.y;
+
+        timePausedCount = TimeUtils.nanoTime();
+
 		SGame.changeScreen(SGame.eScreenTypes.EscapeMenu);
 		SInput.keyboardListeners.remove(this);
+        SInput.touchListeners.remove(this);
         SInput.gamepadListeners.remove(this);
 		//hud.pauseGame();
 		
@@ -526,6 +602,7 @@ public class GameScreen extends SScreen
 	@Override
 	public void hide() {
 		SInput.keyboardListeners.remove(this);
+        SInput.touchListeners.remove(this);
         SInput.gamepadListeners.remove(this);
 	}
 	
@@ -539,13 +616,17 @@ public class GameScreen extends SScreen
 			oldPos.x = camera.position.x;
 			oldPos.y = camera.position.y;
 			
-			player.freeCameraPosition.x = camera.position.x;
-			player.freeCameraPosition.y = camera.position.y;
+			//player.freeCameraPosition.x = camera.position.x;
+			//player.freeCameraPosition.y = camera.position.y;
+
+
 		}
 		else
 		{
 			camera.position.x = oldPos.x;
 			camera.position.y = oldPos.y;
+
+            camera.zoom = mapZoomScale;
 		}
 		
 		temporaryFreeCamera = !temporaryFreeCamera;
@@ -584,9 +665,41 @@ public class GameScreen extends SScreen
             return true;
         }
 
-
-
 		return false;
 	}
 
+/*
+    float prevRatio = 4.0f;
+    @Override
+    public boolean zoom(float initialDistance, float distance) {
+        float ratio = initialDistance / distance;
+        //camera.zoom = camera.zoom * ratio;
+        //System.out.println(camera.zoom);
+
+        if(ratio < prevRatio) {
+            player.freeZoomScale -= 0.1f;
+            if (player.freeZoomScale < 0.5f)
+                player.freeZoomScale = 0.5f;
+        }
+        if(ratio > prevRatio) {
+            player.freeZoomScale += 0.1f;
+            if (player.freeZoomScale > 10.0f)
+                player.freeZoomScale = 10.0f;
+        }
+
+
+        prevRatio = ratio;
+        return false;
+    }
+
+    @Override
+    public boolean tap(float x, float y, int count, int button) {
+
+        if(count >= 2)
+            toggleTempFreeCam();
+
+        Gdx.app.log("tap", ""+count);
+        return false;
+    }
+*/
 }

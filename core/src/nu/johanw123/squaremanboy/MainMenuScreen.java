@@ -43,7 +43,7 @@ public class MainMenuScreen extends SScreen
 
 	private void setupButtons() 
 	{
-		buttonHandler.createButton("Play Puzzle Mode", new EventListener() {
+		buttonHandler.createTextButton("Play Puzzle Mode", new EventListener() {
 			@Override
 			public boolean handle(Event event) {
 				if(event.toString() == "ButtonActivated")
@@ -52,7 +52,7 @@ public class MainMenuScreen extends SScreen
 				return false;
 			}
         });
-		buttonHandler.createButton("Play Survival Mode (1 Life)", new EventListener() {
+		buttonHandler.createTextButton("Play Survival Mode (1 Life)", new EventListener() {
 			@Override
 			public boolean handle(Event event) {
 				if(event.toString() == "ButtonActivated")
@@ -65,7 +65,7 @@ public class MainMenuScreen extends SScreen
 				return false;
 			}
         });
-		buttonHandler.createButton("Leaderboard", new EventListener() {
+		buttonHandler.createTextButton("Leaderboard", new EventListener() {
 			@Override
 			public boolean handle(Event event) {
 				if(event.toString() == "ButtonActivated")
@@ -75,7 +75,7 @@ public class MainMenuScreen extends SScreen
 			}
         });
 		
-		buttonHandler.createButton("Options", new EventListener() {
+		buttonHandler.createTextButton("Options", new EventListener() {
 			@Override
 			public boolean handle(Event event) {
 				if(event.toString() == "ButtonActivated")
@@ -86,7 +86,7 @@ public class MainMenuScreen extends SScreen
         });
 		
 
-		buttonHandler.createButton("Credits", new EventListener() {
+		buttonHandler.createTextButton("Credits", new EventListener() {
 			@Override
 			public boolean handle(Event event) {
 				if(event.toString() == "ButtonActivated")
@@ -99,7 +99,7 @@ public class MainMenuScreen extends SScreen
 		if(SGame.CurrentPlatform != SGame.ePlatform.HTML5)
 		{
 		
-	        buttonHandler.createButton("Exit", new EventListener() {
+	        buttonHandler.createTextButton("Exit", new EventListener() {
 				@Override
 				public boolean handle(Event event) {
 					if(event.toString() == "ButtonActivated")

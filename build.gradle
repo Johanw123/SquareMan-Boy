@@ -15,10 +15,11 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
 
-    version = '1.0'
+    version = '1.2.0'
     ext {
         appName = 'SquareMan-Boy'
-        gdxVersion = '1.0-SNAPSHOT'
+        //gdxVersion = '1.0-SNAPSHOT'
+        gdxVersion = '1.2.0'
         roboVMVersion = '0.0.13'
     }
 
